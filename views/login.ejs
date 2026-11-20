@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= brand %> — Sign in</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-info">
+    <div class="particles" id="particles"></div>
+    <div class="login-info-inner">
+      <div class="live-indicator" style="margin-bottom:18px; padding:0; border:none;">
+        <span class="pulse-dot"></span> Live monitoring active
+      </div>
+      <h1>Virk7<span>'s</span> Honeypot</h1>
+      <p class="tagline"><%= tagline %></p>
+      <ul>
+        <li><b>Traffic gating</b> — org network IPs pass through to the real site, everyone else lands here.</li>
+        <li><b>Behavior capture</b> — every request, credential attempt and password-reset probe is logged per session.</li>
+        <li><b>Intent classification</b> — requests are auto-labeled (credential harvesting, SQLi, path traversal, scanning, etc).</li>
+        <li><b>Geolocation</b> — offline IP lookup plus browser-permission GPS, side by side.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="login-form-side">
+    <div class="login-card">
+      <div class="brand"><%= brand %></div>
+      <p class="sub">Admin dashboard</p>
+
+      <% if (error) { %>
+        <p class="login-error">Incorrect username or password.</p>
+      <% } %>
+
+      <form method="POST" action="/login">
+        <label class="login-label">Username</label>
+        <input class="login-input" type="text" name="username" required autofocus>
+
+        <label class="login-label">Password</label>
+        <input class="login-input" type="password" name="password" required>
+
+        <button type="submit" class="login-btn">Sign in</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    var container = document.getElementById('particles');
+    var count = window.innerWidth < 700 ? 12 : 26;
+    for (var i = 0; i < count; i++) {
+      var s = document.createElement('span');
+      s.className = 'spark';
+      var dx = (Math.random() * 160 - 80).toFixed(0) + 'px';
+      var dy = (Math.random() * 160 - 80).toFixed(0) + 'px';
+      s.style.setProperty('--dx', dx);
+      s.style.setProperty('--dy', dy);
+      s.style.left = (Math.random() * 100).toFixed(1) + '%';
+      s.style.top = (Math.random() * 100).toFixed(1) + '%';
+      var dur = (8 + Math.random() * 12).toFixed(1) + 's';
+      s.style.animationDuration = dur;
+      s.style.animationDelay = (-Math.random() * 16).toFixed(1) + 's';
+      container.appendChild(s);
+    }
+  })();
+</script>
+</body>
+</html>

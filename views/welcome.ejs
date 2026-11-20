@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= brand %> — Welcome</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+  .welcome-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .welcome-card {
+    width: 100%; max-width: 480px; text-align: center;
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 44px 36px;
+    opacity: 0; animation: fadeInUp 0.5s ease 0.05s forwards;
+  }
+  .welcome-mark {
+    width: 56px; height: 56px; border-radius: 14px; margin: 0 auto 20px;
+    background: linear-gradient(145deg, var(--amber), #a5602a);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 24px; color: #1a1208;
+    box-shadow: 0 4px 16px rgba(217,140,63,0.3);
+  }
+  .welcome-title { font-size: 22px; font-weight: 700; margin: 0 0 6px; }
+  .welcome-sub { color: var(--muted); font-size: 13.5px; margin: 0 0 28px; }
+  .welcome-stats { display: flex; gap: 12px; margin-bottom: 30px; }
+  .welcome-stat { flex: 1; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 10px; }
+  .welcome-stat .n { font-family: var(--mono); font-size: 20px; color: var(--amber); font-weight: 700; }
+  .welcome-stat .l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .welcome-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px; background: var(--amber); color: #1a1208;
+    border: none; border-radius: 7px; font-weight: 700; font-size: 14.5px;
+    cursor: pointer; text-decoration: none;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .welcome-btn:hover { background: #e39a4f; box-shadow: 0 6px 18px rgba(217,140,63,0.3); transform: translateY(-1px); text-decoration: none; }
+  .welcome-note { margin-top: 16px; font-size: 11.5px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="welcome-wrap">
+  <div class="welcome-card">
+    <div class="welcome-mark">V</div>
+    <div class="live-indicator" style="justify-content:center; border:none; padding:0; margin-bottom:14px;">
+      <span class="pulse-dot"></span> System monitoring active
+    </div>
+    <h1 class="welcome-title">Welcome back, <%= adminUser %></h1>
+    <p class="welcome-sub"><%= brand %> — everything looks stable since your last visit.</p>
+
+    <div class="welcome-stats">
+      <div class="welcome-stat"><div class="n"><%= stats.totalSessions %></div><div class="l">Sessions</div></div>
+      <div class="welcome-stat"><div class="n"><%= stats.totalRequests %></div><div class="l">Requests</div></div>
+      <div class="welcome-stat"><div class="n"><%= stats.totalCreds %></div><div class="l">Credentials</div></div>
+    </div>
+
+    <a href="/" class="welcome-btn">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Check Security Overview
+    </a>
+    <div class="welcome-note">You'll be taken to the full dashboard with live traffic, charts and session logs.</div>
+  </div>
+</div>
+</body>
+</html>

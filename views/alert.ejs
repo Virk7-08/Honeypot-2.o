@@ -1,0 +1,33 @@
+<%- include('partials/head', { brand: brand, active: 'alert' }) %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Alert Security Team</h1>
+    <p class="page-sub">Send a note to your team about suspicious activity you've spotted. Logged here for the record.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <form method="POST" action="/alert">
+    <label class="login-label" style="margin-bottom:8px;">Message</label>
+    <textarea name="message" rows="4" required placeholder="e.g. Multiple credential-stuffing attempts from 185.220.101.4 in the last hour — recommend blocking at the firewall."
+      style="width:100%; padding:10px 12px; background:#0d1215; border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:13.5px; font-family:var(--sans); resize:vertical;"></textarea>
+    <button type="submit" class="login-btn" style="width:auto; margin-top:14px; padding:10px 22px;">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px;"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      Send alert
+    </button>
+  </form>
+</div>
+
+<h2>Previously sent alerts</h2>
+<table>
+  <tr><th>Time</th><th>Message</th></tr>
+  <% alerts.forEach(function(a) { %>
+    <tr><td class="mono" style="white-space:nowrap;"><%= new Date(a.ts).toLocaleString() %></td><td><%= a.message %></td></tr>
+  <% }) %>
+  <% if (alerts.length === 0) { %>
+    <tr class="empty-row"><td colspan="2">No alerts sent yet.</td></tr>
+  <% } %>
+</table>
+
+<%- include('partials/foot') %>

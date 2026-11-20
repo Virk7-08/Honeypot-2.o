@@ -1,0 +1,44 @@
+<%- include('partials/head', { brand: brand, active: 'unknown' }) %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Unknown Traffic</h1>
+    <p class="page-sub">Visitors with no clear malicious signal yet — recon-level browsing, low risk score. Worth watching, not yet confirmed attackers.</p>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input type="text" class="search-input" id="unkSearch" placeholder="Search by IP, country, browser…">
+</div>
+<table id="unkTable">
+  <tr><th>Session</th><th>IP</th><th>Location</th><th>Browser / OS</th><th>First seen</th><th>Requests</th><th>Risk</th></tr>
+  <% sessions.forEach(function(s) { %>
+    <tr>
+      <td class="mono"><a href="/sessions/<%= s.id %>"><%= s.id.slice(0, 10) %>&hellip;</a></td>
+      <td class="mono"><%= s.ip %></td>
+      <td><%= [s.ip_city, s.ip_region, s.ip_country].filter(Boolean).join(', ') || '—' %></td>
+      <td><%= [s.browser, s.os].filter(Boolean).join(' / ') || '—' %></td>
+      <td class="mono"><%= new Date(s.first_seen).toLocaleString() %></td>
+      <td><%= s.request_count %></td>
+      <td class="risk-low"><%= s.risk_score %></td>
+    </tr>
+  <% }) %>
+  <% if (sessions.length === 0) { %>
+    <tr class="empty-row"><td colspan="7">No unclassified traffic right now — everything captured has a clear risk signal.</td></tr>
+  <% } %>
+</table>
+
+<script>
+  var uSearch = document.getElementById('unkSearch');
+  if (uSearch) {
+    uSearch.addEventListener('input', function () {
+      var q = this.value.trim().toLowerCase();
+      document.querySelectorAll('#unkTable tr:not(:first-child)').forEach(function (row) {
+        row.style.display = row.textContent.toLowerCase().indexOf(q) !== -1 ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,42 @@
+{
+  "_comment": "Copy this file to config.json and edit it. Run `honeypot2 init` to generate it interactively instead.",
+
+  "gatewayPort": 8080,
+  "adminPort": 8081,
+
+  "realSiteTarget": "http://localhost:3000",
+  "_realSiteTarget_comment": "Where legitimate org traffic gets proxied to (your real website/app).",
+
+  "trustProxyHeaders": false,
+  "_trustProxyHeaders_comment": "Set true ONLY if this gateway sits behind a load balancer/CDN you control, so X-Forwarded-For is trustworthy.",
+
+  "orgNetworks": [
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+    "192.168.0.0/16"
+  ],
+  "_orgNetworks_comment": "CIDR ranges considered 'organization network'. Traffic matching one of these is proxied to realSiteTarget. Everything else is routed to the honeypot.",
+
+  "orgAllowList": [],
+  "_orgAllowList_comment": "Optional list of individual IPs (e.g. remote employees) always treated as org traffic.",
+
+  "adminUser": "admin",
+  "adminPassword": "change-me-now",
+
+  "dbPath": "./data/honeypot.db",
+
+  "honeypotBrand": "Virk7's Honeypot",
+  "_honeypotBrand_comment": "Your name/brand for this tool, shown on the admin login and dashboard.",
+
+  "honeypotTagline": "A deception gateway that separates trusted org traffic from everyone else — capturing attacker behavior, intent and geolocation in one dashboard.",
+  "_honeypotTagline_comment": "Short description of what this honeypot does, shown on the admin login page.",
+
+  "siteTitleDecoy": "Employee Portal - Sign In",
+  "_siteTitleDecoy_comment": "Title/branding shown on the decoy page served to non-org traffic.",
+
+  "companyName": "Acme Corporation",
+  "_companyName_comment": "Shown on the decoy login page so it looks like a real internal portal. Change this to whatever fits your deployment.",
+
+  "sessionSecret": "change-this-session-secret",
+  "_sessionSecret_comment": "Used to sign the admin dashboard's login cookie. Change this to a random string before deploying."
+}

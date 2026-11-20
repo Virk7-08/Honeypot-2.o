@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code expired — <%= companyName %></title>
+<link rel="stylesheet" href="/honeypot/style.css">
+</head>
+<body>
+  <div class="split">
+    <div class="side-panel">
+      <div class="side-inner">
+        <div class="logo-mark"><%= companyName.charAt(0) %></div>
+        <h1><%= companyName %></h1>
+        <p>Secure access to internal systems, tools and resources. Use your company credentials to continue.</p>
+        <ul class="side-list">
+          <li>Single sign-on across internal apps</li>
+          <li>Access monitored for your security</li>
+          <li>Need help? Contact IT Support</li>
+        </ul>
+      </div>
+    </div>
+    <div class="form-panel">
+      <div class="form-inner">
+        <h2>This code has expired</h2>
+        <p class="sub">The verification code is no longer valid. Please contact your IT administrator to reset your password, or try signing in again.</p>
+        <a href="/" style="display:inline-block; margin-top:8px; padding:10px 16px; background:#2f5fc4; color:#fff; border-radius:5px; font-size:14px; font-weight:600; text-decoration:none;">
+          Back to sign in
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<%- include('partials/head', { brand: brand, active: 'traffic' }) %>
+
+<a href="/" class="back">
+  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+  All traffic
+</a>
+<h2>Session <%= session.id.slice(0, 10) %>&hellip;</h2>
+
+<div class="panel">
+  <dl class="kv">
+    <dt>IP address</dt><dd><%= session.ip %></dd>
+    <dt>IP geolocation</dt><dd><%= [session.ip_city, session.ip_region, session.ip_country].filter(Boolean).join(', ') || 'unknown' %><% if (session.ip_lat) { %> (<%= session.ip_lat.toFixed(3) %>, <%= session.ip_lon.toFixed(3) %>)<% } %></dd>
+    <dt>Browser geolocation</dt>
+    <dd>
+      <% if (session.geo_permission === 'granted') { %>
+        Granted &mdash; <%= session.browser_lat.toFixed(5) %>, <%= session.browser_lon.toFixed(5) %> (&plusmn;<%= Math.round(session.browser_accuracy) %>m)
+        &nbsp;<a href="https://www.google.com/maps?q=<%= session.browser_lat %>,<%= session.browser_lon %>" target="_blank">map</a>
+      <% } else if (session.geo_permission) { %>
+        <%= session.geo_permission %>
+      <% } else { %>
+        not yet reported
+      <% } %>
+    </dd>
+    <dt>Browser / OS</dt><dd><%= [session.browser, session.os, session.device].filter(Boolean).join(' / ') || '—' %></dd>
+    <dt>User agent</dt><dd style="word-break:break-all;"><%= session.user_agent %></dd>
+    <dt>Fingerprint hash</dt><dd><%= session.fingerprint_hash || '—' %></dd>
+    <dt>First / last seen</dt><dd><%= new Date(session.first_seen).toLocaleString() %> &rarr; <%= new Date(session.last_seen).toLocaleString() %></dd>
+    <dt>Risk score</dt><dd class="<%= session.risk_score >= 15 ? 'risk-high' : (session.risk_score >= 5 ? 'risk-med' : 'risk-low') %>"><%= session.risk_score %></dd>
+  </dl>
+</div>
+
+<% if (credentials.length > 0) { %>
+<h2>Credential attempts (<%= credentials.length %>)</h2>
+<table>
+  <tr><th>Time</th><th>Username</th><th>Password</th></tr>
+  <% credentials.forEach(function(c) { %>
+    <tr><td class="mono"><%= new Date(c.ts).toLocaleString() %></td><td class="mono"><%= c.username %></td><td class="mono"><%= c.password %></td></tr>
+  <% }) %>
+</table>
+<% } %>
+
+<h2>Request log (<%= requests.length %>)</h2>
+<table>
+  <tr><th>Time</th><th>Method</th><th>Path</th><th>Query</th><th>Likely aim</th></tr>
+  <% requests.forEach(function(r) { %>
+    <tr>
+      <td class="mono"><%= new Date(r.ts).toLocaleString() %></td>
+      <td class="mono"><%= r.method %></td>
+      <td class="mono"><%= r.path %></td>
+      <td class="mono"><%= r.query %></td>
+      <td><% r.aims.forEach(function(a) { %><span class="badge"><%= a %></span><% }) %></td>
+    </tr>
+  <% }) %>
+</table>
+
+<%- include('partials/foot') %>

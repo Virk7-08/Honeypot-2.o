@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enter code — <%= companyName %></title>
+<link rel="stylesheet" href="/honeypot/style.css">
+</head>
+<body>
+  <div class="split">
+    <div class="side-panel">
+      <div class="side-inner">
+        <div class="logo-mark"><%= companyName.charAt(0) %></div>
+        <h1><%= companyName %></h1>
+        <p>Secure access to internal systems, tools and resources. Use your company credentials to continue.</p>
+        <ul class="side-list">
+          <li>Single sign-on across internal apps</li>
+          <li>Access monitored for your security</li>
+          <li>Need help? Contact IT Support</li>
+        </ul>
+      </div>
+    </div>
+    <div class="form-panel">
+      <div class="form-inner">
+        <h2>Enter verification code</h2>
+        <p class="sub">We sent a 6-digit code to <strong><%= email %></strong>.</p>
+
+        <form method="POST" action="/verify-code">
+          <input type="hidden" name="email" value="<%= email %>">
+          <label for="code">Verification code</label>
+          <input id="code" type="text" name="code" inputmode="numeric" maxlength="6" placeholder="123456" autocomplete="one-time-code" required autofocus>
+
+          <button type="submit">Verify</button>
+        </form>
+
+        <div class="notice">
+          Didn't get a code? <a href="/forgot-password" class="link-muted">Send again</a>
+          &nbsp;·&nbsp; <a href="/" class="link-muted">Back to sign in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

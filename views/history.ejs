@@ -1,0 +1,91 @@
+<%- include('partials/head', { brand: brand, active: 'history' }) %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">History</h1>
+    <p class="page-sub">Trends and patterns across everything captured so far.</p>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card" style="flex: 1 1 60%;">
+    <div class="chart-title">Requests captured — last 14 days</div>
+    <%
+      const maxDay = Math.max(1, ...requestsPerDay.map(d => d.count));
+      const chartW = 640, chartH = 130, padB = 16, barGap = 4;
+      const barW = (chartW / requestsPerDay.length) - barGap;
+    %>
+    <svg class="bar-chart-svg" viewBox="0 0 <%= chartW %> <%= chartH + padB %>" preserveAspectRatio="none">
+      <% requestsPerDay.forEach(function(d, i) {
+        const h = Math.round((d.count / maxDay) * (chartH - 10));
+        const x = i * (barW + barGap);
+        const y = chartH - h;
+        const dt = new Date(d.day + 'T00:00:00');
+        const showLabel = (i % 2 === 0);
+      %>
+        <rect class="bar" x="<%= x %>" y="<%= y %>" width="<%= barW %>" height="<%= Math.max(h,1) %>" rx="2">
+          <title><%= d.day %>: <%= d.count %> requests</title>
+        </rect>
+        <% if (showLabel) { %>
+          <text x="<%= x + barW/2 %>" y="<%= chartH + 12 %>" text-anchor="middle"><%= dt.getDate() %>/<%= dt.getMonth()+1 %></text>
+        <% } %>
+      <% }) %>
+    </svg>
+  </div>
+
+  <div class="chart-card" style="flex: 1 1 32%;">
+    <div class="chart-title">Session risk distribution</div>
+    <% const rb = riskBuckets; %>
+    <div class="risk-stack">
+      <% if (rb.total === 0) { %>
+        <div style="width:100%; background:#232c31;"></div>
+      <% } else { %>
+        <div class="seg-low" style="width:<%= (rb.low/rb.total*100).toFixed(1) %>%"></div>
+        <div class="seg-med" style="width:<%= (rb.med/rb.total*100).toFixed(1) %>%"></div>
+        <div class="seg-high" style="width:<%= (rb.high/rb.total*100).toFixed(1) %>%"></div>
+      <% } %>
+    </div>
+    <div class="risk-legend">
+      <span><span class="sw" style="background:var(--green);"></span>Low (<%= rb.low %>)</span>
+      <span><span class="sw" style="background:var(--amber);"></span>Medium (<%= rb.med %>)</span>
+      <span><span class="sw" style="background:var(--red);"></span>High (<%= rb.high %>)</span>
+    </div>
+
+    <div class="chart-title" style="margin-top:22px;">Top attack types</div>
+    <% const maxAim = Math.max(1, ...aimDistribution.map(a => a.count)); %>
+    <% aimDistribution.slice(0,5).forEach(function(a) { %>
+      <div class="hbar-row">
+        <div class="hbar-label" title="<%= a.label %>"><%= a.label %></div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:<%= (a.count/maxAim*100).toFixed(1) %>%"></div></div>
+        <div class="hbar-count"><%= a.count %></div>
+      </div>
+    <% }) %>
+    <% if (aimDistribution.length === 0) { %>
+      <p style="color:var(--muted); font-size:12.5px;">No traffic captured yet.</p>
+    <% } %>
+  </div>
+</div>
+
+<h2>Most probed paths</h2>
+<table>
+  <tr><th>Path</th><th>Hits</th></tr>
+  <% stats.topPaths.forEach(function(p) { %>
+    <tr><td class="mono"><%= p.path %></td><td><%= p.count %></td></tr>
+  <% }) %>
+  <% if (stats.topPaths.length === 0) { %>
+    <tr class="empty-row"><td colspan="2">No traffic captured yet.</td></tr>
+  <% } %>
+</table>
+
+<h2>Top source countries</h2>
+<table>
+  <tr><th>Country</th><th>Sessions</th></tr>
+  <% stats.topCountries.forEach(function(c) { %>
+    <tr><td><%= c.country %></td><td><%= c.count %></td></tr>
+  <% }) %>
+  <% if (stats.topCountries.length === 0) { %>
+    <tr class="empty-row"><td colspan="2">No traffic captured yet.</td></tr>
+  <% } %>
+</table>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,26 @@
+{
+  "name": "honeypot2.0-by-virk7",
+  "version": "1.0.0",
+  "description": "Honeypot 2.O by Virk7 - drop-in gateway that lets organization traffic through to the real site and diverts everyone else into an instrumented honeypot.",
+  "main": "src/server.js",
+  "bin": {
+    "honeypot2": "./bin/honeypot2.js"
+  },
+  "scripts": {
+    "start": "node bin/honeypot2.js start",
+    "init": "node bin/honeypot2.js init"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "commander": "^12.1.0",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "geoip-lite": "^1.4.10",
+    "http-proxy-middleware": "^3.0.0",
+    "ipaddr.js": "^2.2.0",
+    "morgan": "^1.10.0",
+    "ua-parser-js": "^1.0.38"
+  }
+}

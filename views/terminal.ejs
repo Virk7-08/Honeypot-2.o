@@ -1,0 +1,94 @@
+<%- include('partials/head', { brand: brand, active: 'terminal' }) %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Terminal</h1>
+    <p class="page-sub">Query captured traffic directly. Type <code>help</code> to see every command.</p>
+  </div>
+</div>
+
+<div class="terminal-window">
+  <div class="terminal-titlebar">
+    <span class="term-dot red"></span>
+    <span class="term-dot yellow"></span>
+    <span class="term-dot green"></span>
+    <span class="term-title"><%= adminUser %>@honeypot: ~</span>
+  </div>
+  <div class="terminal-body" id="termBody">
+    <div class="term-line banner">Honeypot 2.O terminal — type "help" and press Enter.</div>
+    <div class="term-line banner">Linux-style (ls, cat, clear) and cmd-style (dir, cls) aliases both work.</div>
+    <div class="term-line">&nbsp;</div>
+    <div class="term-input-row">
+      <span class="term-prompt-label" id="promptLabel"><%= adminUser %>@honeypot:~$</span>
+      <input type="text" class="term-input" id="termInput" autocomplete="off" spellcheck="false" autofocus>
+    </div>
+  </div>
+</div>
+<div class="terminal-hint">Try: <code>traffic</code>, <code>attackers</code>, <code>history 7</code>, <code>session &lt;id-prefix&gt;</code>, <code>alert "message"</code>, <code>stats</code></div>
+
+<script>
+(function () {
+  var body = document.getElementById('termBody');
+  var input = document.getElementById('termInput');
+  var promptLabel = document.getElementById('promptLabel');
+  var promptText = promptLabel.textContent;
+  var history = [];
+  var histIndex = -1;
+
+  function scrollToBottom() { body.scrollTop = body.scrollHeight; }
+
+  function appendLine(text, cls) {
+    var div = document.createElement('div');
+    div.className = 'term-line' + (cls ? ' ' + cls : '');
+    div.textContent = text;
+    body.insertBefore(div, body.lastElementChild);
+  }
+
+  function runCommand(cmd) {
+    appendLine(promptText + ' ' + cmd, 'cmd');
+    if (cmd.trim().toLowerCase() === 'clear' || cmd.trim().toLowerCase() === 'cls') {
+      Array.from(body.querySelectorAll('.term-line')).forEach(function (el) { el.remove(); });
+      scrollToBottom();
+      return;
+    }
+    fetch('/api/terminal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ command: cmd })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.output) appendLine(data.output, data.error ? 'err' : '');
+        scrollToBottom();
+      })
+      .catch(function () {
+        appendLine('error: could not reach server', 'err');
+        scrollToBottom();
+      });
+  }
+
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      var cmd = input.value;
+      input.value = '';
+      if (cmd.trim()) {
+        history.push(cmd);
+        histIndex = history.length;
+      }
+      runCommand(cmd);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (histIndex > 0) { histIndex--; input.value = history[histIndex] || ''; }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (histIndex < history.length - 1) { histIndex++; input.value = history[histIndex] || ''; }
+      else { histIndex = history.length; input.value = ''; }
+    }
+  });
+
+  body.addEventListener('click', function () { input.focus(); });
+  input.focus();
+})();
+</script>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,94 @@
+<%- include('partials/head', { brand: brand, active: 'traffic' }) %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Traffic</h1>
+    <p class="page-sub">Every visitor the honeypot has seen, most recent first.</p>
+  </div>
+  <form method="POST" action="/reset" onsubmit="return confirm('This permanently deletes all captured sessions, requests and credentials. Continue?');">
+    <button type="submit" class="btn-danger-outline">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      Reset all data
+    </button>
+  </form>
+</div>
+
+<div class="domain-panel">
+  <div class="domain-item">
+    <span class="dot"></span>
+    <div><span class="dlabel">Protecting</span><span class="dval"><%= protection.realSiteTarget %></span></div>
+  </div>
+  <div class="domain-item"><div><span class="dlabel">Decoy shown as</span><span class="dval"><%= protection.companyName %></span></div></div>
+  <div class="domain-item"><div><span class="dlabel">Gateway port</span><span class="dval">:<%= protection.gatewayPort %></span></div></div>
+  <div class="domain-item"><div><span class="dlabel">Org networks trusted</span><span class="dval"><%= protection.orgNetworks.join(', ') || 'none configured' %></span></div></div>
+</div>
+
+<div class="stat-row">
+  <div class="stat">
+    <div class="stat-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+    <div class="num" data-count="<%= stats.totalSessions %>">0</div>
+    <div class="label">Total visitors</div>
+  </div>
+  <div class="stat">
+    <div class="stat-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H7l-3 3V4z"/></svg></div>
+    <div class="num" data-count="<%= stats.totalRequests %>">0</div>
+    <div class="label">Requests captured</div>
+  </div>
+  <div class="stat">
+    <div class="stat-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/></svg></div>
+    <div class="num" data-count="<%= stats.totalCreds %>">0</div>
+    <div class="label">Credential attempts</div>
+  </div>
+</div>
+
+<h2>All traffic</h2>
+<div class="search-wrap">
+  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input type="text" class="search-input" id="trafficSearch" placeholder="Search by IP, country, browser, session…">
+</div>
+<table id="trafficTable">
+  <tr><th>Session</th><th>IP</th><th>Location</th><th>Browser / OS</th><th>First seen</th><th>Last seen</th><th>Requests</th><th>Risk</th></tr>
+  <% sessions.forEach(function(s) { %>
+    <tr>
+      <td class="mono"><a href="/sessions/<%= s.id %>"><%= s.id.slice(0, 10) %>&hellip;</a></td>
+      <td class="mono"><%= s.ip %></td>
+      <td><%= [s.ip_city, s.ip_region, s.ip_country].filter(Boolean).join(', ') || '—' %></td>
+      <td><%= [s.browser, s.os].filter(Boolean).join(' / ') || '—' %></td>
+      <td class="mono"><%= new Date(s.first_seen).toLocaleString() %></td>
+      <td class="mono"><%= new Date(s.last_seen).toLocaleString() %></td>
+      <td><%= s.request_count %></td>
+      <td class="<%= s.risk_score >= 15 ? 'risk-high' : (s.risk_score >= 5 ? 'risk-med' : 'risk-low') %>"><%= s.risk_score %></td>
+    </tr>
+  <% }) %>
+  <% if (sessions.length === 0) { %>
+    <tr class="empty-row"><td colspan="8">No traffic captured yet.</td></tr>
+  <% } %>
+</table>
+
+<script>
+  document.querySelectorAll('.num[data-count]').forEach(function (el) {
+    var target = parseInt(el.getAttribute('data-count'), 10) || 0;
+    if (target === 0) return;
+    var duration = 600, start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      el.textContent = Math.floor(progress * target);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(step);
+  });
+
+  var tSearch = document.getElementById('trafficSearch');
+  if (tSearch) {
+    tSearch.addEventListener('input', function () {
+      var q = this.value.trim().toLowerCase();
+      document.querySelectorAll('#trafficTable tr:not(:first-child)').forEach(function (row) {
+        row.style.display = row.textContent.toLowerCase().indexOf(q) !== -1 ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+<%- include('partials/foot') %>

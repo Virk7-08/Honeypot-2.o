@@ -1,0 +1,44 @@
+<%- include('partials/head', { brand: brand, active: 'attackers' }) %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Attacker Info</h1>
+    <p class="page-sub">Sessions with confirmed malicious behavior — credential harvesting, scanning, injection attempts, or other classified attack signals.</p>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input type="text" class="search-input" id="atkSearch" placeholder="Search by IP, country, session…">
+</div>
+<table id="atkTable">
+  <tr><th>Session</th><th>IP</th><th>Location</th><th>Browser / OS</th><th>Credential attempts</th><th>Requests</th><th>Risk</th></tr>
+  <% sessions.forEach(function(s) { %>
+    <tr>
+      <td class="mono"><a href="/sessions/<%= s.id %>"><%= s.id.slice(0, 10) %>&hellip;</a></td>
+      <td class="mono"><%= s.ip %></td>
+      <td><%= [s.ip_city, s.ip_region, s.ip_country].filter(Boolean).join(', ') || '—' %></td>
+      <td><%= [s.browser, s.os].filter(Boolean).join(' / ') || '—' %></td>
+      <td><%= s.cred_count %></td>
+      <td><%= s.request_count %></td>
+      <td class="<%= s.risk_score >= 15 ? 'risk-high' : 'risk-med' %>"><%= s.risk_score %></td>
+    </tr>
+  <% }) %>
+  <% if (sessions.length === 0) { %>
+    <tr class="empty-row"><td colspan="7">No confirmed attacker sessions yet.</td></tr>
+  <% } %>
+</table>
+
+<script>
+  var aSearch = document.getElementById('atkSearch');
+  if (aSearch) {
+    aSearch.addEventListener('input', function () {
+      var q = this.value.trim().toLowerCase();
+      document.querySelectorAll('#atkTable tr:not(:first-child)').forEach(function (row) {
+        row.style.display = row.textContent.toLowerCase().indexOf(q) !== -1 ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+<%- include('partials/foot') %>

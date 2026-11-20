@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= siteTitleDecoy %></title>
+<link rel="stylesheet" href="/honeypot/style.css">
+</head>
+<body>
+  <div class="split">
+    <div class="side-panel">
+      <div class="side-inner">
+        <div class="logo-mark"><%= companyName.charAt(0) %></div>
+        <h1><%= companyName %></h1>
+        <p>Secure access to internal systems, tools and resources. Use your company credentials to continue.</p>
+        <ul class="side-list">
+          <li>Single sign-on across internal apps</li>
+          <li>Access monitored for your security</li>
+          <li>Need help? Contact IT Support</li>
+        </ul>
+      </div>
+    </div>
+    <div class="form-panel">
+      <div class="form-inner">
+        <div class="form-logo"><%= companyName.charAt(0) %></div>
+        <h2>Sign in</h2>
+        <p class="sub">Enter your company account to continue<% if (error) { %><span class="err-inline"> — incorrect username or password</span><% } %></p>
+
+        <form id="loginForm" method="POST" action="/login">
+          <label for="username">Username or email</label>
+          <input id="username" type="text" name="username" autocomplete="username" placeholder="you@company.com" required autofocus>
+
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password" autocomplete="current-password" placeholder="••••••••" required>
+
+          <div class="row-between">
+            <label class="remember"><input type="checkbox" name="remember"> Keep me signed in</label>
+            <a href="/forgot-password" class="link-muted">Forgot password?</a>
+          </div>
+
+          <button type="submit">Sign in</button>
+        </form>
+
+        <div class="notice" id="locNotice">Verifying access location&hellip;</div>
+        <div class="footer-note">&copy; <%= year %> <%= companyName %>. Internal use only. Unauthorized access is prohibited and monitored.</div>
+      </div>
+    </div>
+  </div>
+  <script src="/honeypot/track.js"></script>
+</body>
+</html>
